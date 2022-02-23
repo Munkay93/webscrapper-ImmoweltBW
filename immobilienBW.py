@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import os
 
-
+# Functions
 def filter_num(string: str, swap=False):
     string_new=""
     for i, char in enumerate(string):
@@ -19,14 +19,15 @@ def filter_num(string: str, swap=False):
 
 
 OUTPUT_DIR = "outputs"
+num_pages = 100
+filename = "output"
 
 try:
     os.mkdir(OUTPUT_DIR)
 except:
     print("output directory allready exists")
 
-num_pages = 100
-filename = "output"
+
 
 col_dict = {
      "Titel": "Titel",
@@ -112,7 +113,7 @@ df = df.dropna()
 df = df.loc[df[col_dict["Preis"]] != 0]
 df = df.reset_index(drop=True)
 
-
+# Output 
 df.to_pickle(os.path.join(OUTPUT_DIR, filename+".pkl"))
 df.to_excel(os.path.join(OUTPUT_DIR, filename+".xlsx"))
 
