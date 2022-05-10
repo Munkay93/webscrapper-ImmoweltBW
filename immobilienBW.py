@@ -4,6 +4,8 @@ import requests
 import pandas as pd
 import numpy as np
 import os
+from selenium import webdriver
+
 
 # Functions
 def filter_num(string: str, swap=False):
@@ -19,7 +21,6 @@ def filter_num(string: str, swap=False):
 
 
 OUTPUT_DIR = "outputs"
-num_pages = 100
 filename = "output"
 
 try:
@@ -48,6 +49,21 @@ except:
     print("No old Dataframe available. Creating new one")
     df = pd.DataFrame(columns=list(col_dict.values()))
 
+# Finde die Anzahl an vorhandenen Seiten
+url = f"https://www.immowelt.de/liste/bl-baden-wuerttemberg/haeuser/kaufen?d=true&sd=DESC&sf=RELEVANCE&sp=1"
+browser = webdriver.Firefox()
+browser.get(url)
+html = browser.page_source
+soup = BeautifulSoup(html, 'html.parser')
+div = soup.find('div', class_="Pagination-190de")
+button = div.find_all("button")
+num_pages = button[4].find("span")
+num_pages = int(num_pages.text)
+
+#manually set num_page
+#num_page = 10
+
+
 for page in range(1,num_pages):
     print(f"Page: {page}")
     print(f"Einträge: {len(df.index)}")
@@ -56,6 +72,7 @@ for page in range(1,num_pages):
     soup = BeautifulSoup(r.content, "html.parser")
     units = soup.find_all("div", class_=["FactsContainer-73861","FactsMain-bb891"])
 
+    
     for item in units:
 
         title = item.find("h2").text
